@@ -141,7 +141,6 @@ So we should create a minimal dataset that just looks like the kind of data we e
 > [Fixtures](https://docs.pytest.org/en/stable/fixture.html) in `pytest` can be passed as arguments to test functions to initialise some kind of base behaviour. In this case, the built-in `monkeypatch` fixture gives you tools to monkey-patch a code base before actually testing it.
 >
 > I regularly use the built-in fixtures but rarely write custom fixtures. I prefer to write normal functions when I need a utility for multiple tests, as `pytest`'s semantic model for fixtures—a magical argument that *might* have setup/teardown logic and *might* be an object with it's own methods and attributes—is confusing and not necessary for the majority of use cases.
-```
 
 ```python
 # test_pipeline.py
