@@ -2,12 +2,14 @@
 
 Here we'll go through a basic pipeline and the where/how/when to test it.
 
+<!--
 TODO:
 
 * appropriate headings and section breaks
 * quick intro
-* note blocks
 * quick mypy talk
+* conda config
+-->
 
 ## 0
 
@@ -56,9 +58,16 @@ def best_preworkout_cereal_pipeline():
     display_highest_protein_cereal(name)
 ```
 
-> :grey_question: Note
-> 
-> I wouldn't worry about writing tests until you have a sense of what the API should look like.
+> :information_source: <sub><sup><b>Note</b></sub></sup>
+>
+> A strict test-driven approach would have you writing tests right at the start, but personally I wouldn't worry about writing tests until you have a sense of what the API should look like. To quote Simon Willison in
+["How to cheat at unit tests with pytest and Black"](https://simonwillison.net/2020/Feb/11/cheating-at-unit-tests-pytest-black/):
+>>
+>> In pure test-driven development you write the tests first, and don’t start on the implementation until you’ve watched them fail.
+>>
+>>Most of the time I find that this is a net loss on productivity. I tend to prototype my way to solutions, so I often find myself with rough running code before I’ve developed enough of a concrete implementation plan to be able to write the tests.
+>>
+>> So… I cheat. Once I’m happy with the implementation I write the tests to match it. Then once I have the tests in place and I know what needs to change I can switch to using changes to the tests to drive the implementation.
 
 Our pipeline `best_preworkout_cereal_pipeline()` uses:
 
@@ -128,9 +137,12 @@ Let's assume in our scenario that we're not using the free and public `"https://
 
 So we should create a minimal dataset that just looks like the kind of data we expect (e.g. [mock_cereals.csv](./mock_cereals.csv)), and then make the pipeline use that when testing. We can use the the handy [`monkeypatch`](https://docs.pytest.org/en/stable/how-to/monkeypatch.html) fixture to inject this mocked data into our pipeline.
 
-> :grey_question: Note
-> 
-> fixtures TODO	
+> :information_source: <sub><sup><b>Note</b></sub></sup>
+>
+> [Fixtures](https://docs.pytest.org/en/stable/fixture.html) in `pytest` can be passed as arguments to test functions to initialise some kind of base behaviour. In this case, the built-in `monkeypatch` fixture gives you tools to monkey-patch a code base before actually testing it.
+>
+> I regularly use the built-in fixtures but rarely write custom fixtures. I prefer to write normal functions when I need a utility for multiple tests, as `pytest`'s semantic model for fixtures—a magical argument that *might* have setup/teardown logic and *might* be an object with it's own methods and attributes—is confusing and not necessary for the majority of use cases.
+```
 
 ```python
 # test_pipeline.py
@@ -241,15 +253,15 @@ def preprocess_cereals(df: pd.DataFrame) -> pd.DataFrame:
     return df
 ```
 
-> :grey_question: Note
+> :information_source: <sub><sup><b>Note</b></sub></sup>
 > 
-> why raise TODO
+> Instead of assuming there is a "brand" column if there is no "name" column, I check for it first. This allows us to raise a custom error if it cannot be found, which might be handy if in the future neither a "name" or "brand" column is used for cereal names, as it explicitly tells us or another developer what exactly the problem is.
 
-As you can see, the tests so far all look similar to one another. We can utilise [`@pytest.mark.parametrize`](https://docs.pytest.org/en/6.2.x/parametrize.html) to create a generalised test function which can be passed all the mocked datasets as parameters.
+As you can see, the tests so far all look similar to one another. We can utilise [`@pytest.mark.parametrize`](https://docs.pytest.org/en/stable/parametrize.html) to create a generalised test function which can be passed all the mocked datasets as parameters.
 
-> :grey_question: Note
-> 
-> marks TODO
+> :information_source: <sub><sup><b>Note</b></sub></sup>
+>
+> [Marks](https://docs.pytest.org/en/stable/how-to/mark.html) in `pytest` sets metadata to test functions that can change how they behave when running the `pytest` application (i.e. on your terminal).  
 
 ```python
 # test_pipeline.py
