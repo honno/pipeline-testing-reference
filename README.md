@@ -102,7 +102,7 @@ $ pytest test_pipeline.py -v
 test_pipeline.py::test_smoke_pipeline PASSED
 ```
 
-Running tests locally is very useful whilst developing, but it's also a good idea to ensure they run when we push changes to GitHub, namely so pull request authors will see when they've pushed a breaking change even if they didn't test locally. A simple config for the GitHub Actions CI could lool like,
+Running tests locally is very useful whilst developing, but it's also a good idea to ensure they run when we push changes to GitHub, namely so pull request authors will see when they've pushed a breaking change even if they didn't test locally. A simple config for the GitHub Actions CI could look like,
 
 ```yaml
 # .github/workflows/test.yml
@@ -129,12 +129,12 @@ jobs:
 
 Let's assume in our scenario that we're not using the free and public `"https://docs.dagster.io/assets/cereal.csv"` endpoint for the latest cereals data, but a large and private endpoint. A major limitation to our smoke test is that it would be impractical to pull such a dataset when testing:
 
-* Using a live web endpoint means any downtime prevents testing
-* Large datasets might take a long time to both download and parse
-* Private endpoints should require authentication, which is impractical when running tests both locally and on CI
-* Any sensitive data could be leaked on CI logs
+* Using a live web endpoint means any downtime stops us running our test suite.
+* Large datasets might take a long time to both download and parse.
+* Private endpoints should require authentication, which is impractical when running tests both locally and on CI.
+* Any sensitive data could be leaked on CI logs.
 
-So we should create a minimal dataset that just looks like the kind of data we expect (e.g. [mock_cereals.csv](./mock_cereals.csv)), and then make the pipeline use that when testing. We can use the the handy [`monkeypatch`](https://docs.pytest.org/en/stable/how-to/monkeypatch.html) fixture to inject this mocked data into our pipeline.
+So we should create a minimal dataset that just looks like the kind of data we expect (e.g. [mock_cereals.csv](./mock_cereals.csv)), and then inject it to the pipeline when testing. We can use the the handy [`monkeypatch`](https://docs.pytest.org/en/stable/how-to/monkeypatch.html) fixture to inject this mocked data into our pipeline.
 
 > :information_source: <sub><sup><b>Note</b></sub></sup>
 >
@@ -164,7 +164,7 @@ Monkey-patching a third-party function like `pd.read_csv()` is not ideal, as we 
 
 ### Testing code runs without failures
 
-Let's say you run the pipeline the next day and it halts due to an error,
+Let's say you run the pipeline the next day and it halts due to an error.
 
 ```python
 $ dagster job execute -f pipeline.py
@@ -187,7 +187,7 @@ def test_smoke_pipeline_uppercase_cols(monkeypatch):
     best_preworkout_cereal_pipeline.execute_in_process()
 ```
 
-We don't assert anything here as we just want to see our pipeline runs without errors. As we intended, running this test it fails with the same failure we got before,
+We don't assert anything here as we just want to see our pipeline runs without errors. As we intended, running this test it fails with the same failure we got before.
 
 ```python
 $ pytest test_pipeline.py::test_smoke_pipeline_uppercase_cols -v
