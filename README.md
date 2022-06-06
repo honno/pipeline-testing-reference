@@ -5,13 +5,12 @@ Here we'll go through a basic pipeline and the where/how/when to test it.
 <!--
 TODO:
 
-* appropriate headings and section breaks
 * quick intro
 * quick mypy talk
 * conda config
 -->
 
-## 0
+## Prototyping
 
 For this scenario we've been tasked to automate the process of recommending the best cereal to have when body building. We'll want to build a pipeline, and decide on using Dagster for data orchestration. We'll use pandas for loading/manipulating/analysing the data.
 We decide to start out simple and build our pipeline just to recommend a cereal by **finding the highest protein (grams per serving) cereal** in the latest cereal dataset.
@@ -82,7 +81,7 @@ $ dagster job execute -f pipeline.py
 INFO - Most protein-rich cereal: Cheerios
 ```
 
-## 1
+## Continuous Integration
 
 We have a working pipeline! Now is the best time to ensure it keeps on working by writing a smoke test, i.e. a very simple test that sees if our given program runs without failures.
 
@@ -162,7 +161,9 @@ def test_smoke_pipeline(monkeypatch):
 
 Monkey-patching a third-party function like `pd.read_csv()` is not ideal, as we (or another third-party library) might need to use it elsewhere in the future. However in this use case, other solutions for injecting our mocked dataset are more complicated and thus time-consuming to implement/maintain (e.g. [Dagster resources](https://docs.dagster.io/tutorial/advanced-tutorial/resources)), so it's quite valid to go with the easier solution that Just Works™ for now—rarely should testing be a chore!
 
-## 2
+## Test-Driven Development
+
+### Testing code runs without failures
 
 Let's say you run the pipeline the next day and it halts due to an error,
 
@@ -275,7 +276,7 @@ def test_smoke_pipeline(monkeypatch, df):
 
 Tests probably don't need as much attention to code quality and maintainability as the code you're actually testing, but it's still a good idea to refactor when it's easy enough to do so.
 
-## 3
+### Testing code works as expected
 
 Say we want to change the behaviour of our pipeline. Right now we just sort cereals by "protein", but sometimes there are multiple cereals with the same amount of max protein, and we just recommend any one of them arbitrarily (in this case, it's the first record with the max protein that is recommended).
 
