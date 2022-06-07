@@ -230,7 +230,7 @@ Say we have another bug where a newer dataset replaces the "name" column by a "b
 mock_cereals_brand_col = mock_cereals.rename({"name": "brand"}, axis=1)
 
 
-def test_smoke_pipeline_uppercase_cols(monkeypatch):
+def test_smoke_pipeline_brand_col(monkeypatch):
     monkeypatch.setattr(pd, "read_csv", lambda _: mock_cereals_brand_col)
     best_preworkout_cereal_pipeline.execute_in_process()
 ```
