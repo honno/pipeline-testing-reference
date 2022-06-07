@@ -1,14 +1,13 @@
 # Pipeline testing reference
 
-Here we'll go through a basic pipeline and the where/how/when to test it.
+Here we'll go through a basic pipeline and the how/where/when to test it.
 
-<!--
-TODO:
-
-* quick intro
-* quick mypy talk
-* conda config
--->
+* [Prototyping](#prototyping)
+* [Continuous Integration](#continuous-integration)
+* [Test-Driven Development](#test-driven-development)
+  * [Testing code runs without failures](#testing-code-runs-without-failures)
+  * [Testing code works as expected](#testing-code-works-as-expected)
+* [Exercise](#exercise)
 
 ## Prototyping
 
@@ -57,7 +56,7 @@ def best_preworkout_cereal_pipeline():
     display_highest_protein_cereal(name)
 ```
 
-> :information_source: <sub><sup><b>Note</b></sub></sup>
+> <sup><sub>:information_source:</sub></sup> <sup><sub><b>Note</b></sub></sup>
 >
 > A strict test-driven approach would have you writing tests right at the start, but personally I wouldn't worry about writing tests until you have a sense of what the API should look like. To quote Simon Willison in
 ["How to cheat at unit tests with pytest and Black"](https://simonwillison.net/2020/Feb/11/cheating-at-unit-tests-pytest-black/):
@@ -136,7 +135,7 @@ Let's assume in our scenario that we're not using the free and public `"https://
 
 So we should create a minimal dataset that just looks like the kind of data we expect (e.g. [mock_cereals.csv](./mock_cereals.csv)), and then inject it to the pipeline when testing. We can use the the handy [`monkeypatch`](https://docs.pytest.org/en/stable/how-to/monkeypatch.html) fixture to inject this mocked data into our pipeline.
 
-> :information_source: <sub><sup><b>Note</b></sub></sup>
+> <sup><sub>:information_source:</sub></sup> <sup><sub><b>Note</b></sub></sup>
 >
 > [Fixtures](https://docs.pytest.org/en/stable/fixture.html) in `pytest` can be passed as arguments to test functions to initialise some kind of base behaviour. In this case, the built-in `monkeypatch` fixture gives you tools to monkey-patch a code base before actually testing it.
 >
@@ -214,7 +213,7 @@ def best_preworkout_cereal_pipeline():
     df = preprocess_cereals(df)
     name = find_highest_protein_cereal(df)
     display_highest_protein_cereal(name)
-``` 
+```
 
 Whenever we think we might have resolved the problem, we run the corresponding test, e.g.
 
@@ -243,7 +242,7 @@ def test_smoke_pipeline_uppercase_cols(monkeypatch):
 @op
 def preprocess_cereals(df: pd.DataFrame) -> pd.DataFrame:
     df.columns = df.columns.str.lower()
-    
+
     if "name" not in df.columns:
 	    if "brand" in df.columns:
 	        df = df.rename({"brand": "name"}, axis=1)
@@ -253,15 +252,15 @@ def preprocess_cereals(df: pd.DataFrame) -> pd.DataFrame:
     return df
 ```
 
-> :information_source: <sub><sup><b>Note</b></sub></sup>
-> 
+> <sup><sub>:information_source:</sub></sup> <sup><sub><b>Note</b></sub></sup>
+>
 > Instead of assuming there is a "brand" column if there is no "name" column, I check for it first. This allows us to raise a custom error if it cannot be found, which might be handy if in the future neither a "name" or "brand" column is used for cereal names, as it explicitly tells us or another developer what exactly the problem is.
 
 As you can see, the tests so far all look similar to one another. We can utilise [`@pytest.mark.parametrize`](https://docs.pytest.org/en/stable/parametrize.html) to create a generalised test function which can be passed all the mocked datasets as parameters.
 
-> :information_source: <sub><sup><b>Note</b></sub></sup>
+> <sup><sub>:information_source:</sub></sup> <sup><sub><b>Note</b></sub></sup>
 >
-> [Marks](https://docs.pytest.org/en/stable/how-to/mark.html) in `pytest` sets metadata to test functions that can change how they behave when running the `pytest` application (i.e. on your terminal).  
+> [Marks](https://docs.pytest.org/en/stable/how-to/mark.html) in `pytest` sets metadata to test functions that can change how they behave when running the `pytest` application (i.e. on your terminal).
 
 ```python
 # test_pipeline.py
@@ -359,7 +358,7 @@ Say we have a separate dataset which aggregates user reviews of cereals, which w
 def merge_ratings(cereals_df: pd.DataFrame, reviews_df: pd.DataFrame) -> pd.DataFrame:
     """
     Returns a merged dataset from the primary and user-reviews datasets.
-    
+
     Our primary cereals dataset looks like
 
                 name | rating | ...
@@ -408,8 +407,8 @@ def test_merge_ratings():
 
 How about having a go at writing a test and implementing this function? See the file [`exercise.ipynb`](./exercise.ipynb) for a template notebook to work on, which provides some example dataframes to use in `test_merge_ratings`.
 
-> :information_source: <sub><sup><b>Note</b></sub></sup>
-> 
+> <sup><sub>:information_source:</sub></sup> <sup><sub><b>Note</b></sub></sup>
+>
 > For unix-y terminals, including macOs and Windows Subsystem for Linux (WSL) terminals, a quickstart to get the notebook up and running could look like
 >
 > ```bash
@@ -418,5 +417,5 @@ How about having a go at writing a test and implementing this function? See the 
 > $ python -m pip install pandas jupyter
 > $ jupyter notebook exercise.ipynb
 > ```
-> 
+>
 > A more comprehensive walk-through on running notebooks can be found [here](https://jupyter-notebook-beginner-guide.readthedocs.io/en/latest/).
