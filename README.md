@@ -320,7 +320,7 @@ Our test fails—good! So say our initial idea is to add "calories" to the sorte
      return sorted_df.iloc[0]["name"]
 ```
 
-and test again,
+We test again,
 
 ```python
 $ pytest test_pipeline.py::test_find_highest_protein_cereal -v
@@ -332,15 +332,91 @@ AssertionError: assert 'Bran - no added sugars' == 'Bran'
 	+ Bran - no added sugars
 ```
 
-It fails again, which is also good, as it shows we haven't actually fixed what we intended to. In this case we were sorting "calories" in descending order due to the `ascending=False` in [`DataFrame.sort_values()`](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.sort_values.html), so to sort by ascending order we can just pass a boolean respectively for each sorted column like so
+And it fails again, which is also good, as it shows we haven't actually fixed what we intended to. In this case we were sorting "calories" in descending order due to the `ascending=False` in [`DataFrame.sort_values()`](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.sort_values.html), so to sort by ascending order we can just pass a boolean respectively for each sorted column like so
 
 ```diff
 - sorted_df = df.sort_values(["protein", "calories"], ascending=False)
 + sorted_df = df.sort_values(["protein", "calories"], ascending=[False, True])
 ```
 
+We test once more,
+
 ```python
 $ pytest test_pipeline.py::test_find_highest_protein_cereal -v
 ===================== test session starts ======================
 test_pipeline.py::test_find_highest_protein_cereal PASSED
 ```
+
+And it passes, verifying our solution is correct!
+
+## Exercise
+
+Say we have a separate dataset which aggregates user reviews of cereals, which we'll want to merge with our primary dataset for analysis in the future. We settle on a function `merge_ratings()` which will take both the original dataset and the reviews dataset together.
+
+```python
+# pipeline.py
+@op
+def merge_ratings(cereals_df: pd.DataFrame, reviews_df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Returns a merged dataset from the primary and user-reviews datasets.
+    
+    Our primary cereals dataset looks like
+
+                name | rating | ...
+        -----------------------------
+            Cheerios | 68.402 |
+         Apple Jacks | 33.983 |
+             Basic 4 | 59.425 |
+                 ... |        |
+
+    A secondary user reviews dataset looks like
+
+                name | rating
+        ----------------------
+            Cheerios | 58.645
+         Apple Jacks | 83.852
+             Basic 4 | 42.421
+                 ... |
+
+    The rating column in our primary dataset is a formulaic nutritional score,
+    whilst the rating column in the user reviews dataset is an aggregate of user
+    scores.
+
+    The merged dataset looks like
+
+                name | nutrition_rating | user_rating | ...
+        ------------ | ---------------- | ----------- | -----
+            Cheerios |           68.402 |      58.645 |
+         Apple Jacks |           33.983 |      83.852 |
+             Basic 4 |           59.425 |      42.421 |
+                 ... |                  |             |
+
+    """
+    ...
+```
+
+Given the awkwardness of merging dataframes in `pandas`, this would be a prime opportunity to write a test *first*.
+
+```python
+# test_pipeline.py
+def test_merge_ratings():
+    """
+    Dataframe with merged ratings has correct shape and columns.
+    """
+    ...
+```
+
+How about having a go at writing a test and implementing this function? See the file [`exercise.ipynb`](./exercise.ipynb) for a template notebook to work on, which provides some example dataframes to use in `test_merge_ratings`.
+
+> :information_source: <sub><sup><b>Note</b></sub></sup>
+> 
+> For unix-y terminals, including macOs and Windows Subsystem for Linux (WSL) terminals, a quickstart to get the notebook up and running could look like
+>
+> ```bash
+> $ git clone https://github.com/honno/pipeline-testing-reference
+> $ cd pipeline-testing-reference
+> $ python -m pip install pandas jupyter
+> $ jupyter notebook exercise.ipynb
+> ```
+> 
+> A more comprehensive walk-through on running notebooks can be found [here](https://jupyter-notebook-beginner-guide.readthedocs.io/en/latest/).

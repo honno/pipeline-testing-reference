@@ -1,0 +1,5 @@
+name: cereals
+dependencies:
+  - pandas
+  - dagster
+  - pytest
