@@ -56,8 +56,7 @@ def best_preworkout_cereal_pipeline():
     display_highest_protein_cereal(name)
 ```
 
-> <sup><sub>:information_source:</sub></sup> <sup><sub><b>Note</b></sub></sup>
->
+> <sup><sub>:information_source:</sub></sup> <sup><sub><b>Note</b></sub></sup><br/>
 > A strict test-driven approach would have you writing tests right at the start, but personally I wouldn't worry about writing tests until you have a sense of what the API should look like. To quote Simon Willison in
 ["How to cheat at unit tests with pytest and Black"](https://simonwillison.net/2020/Feb/11/cheating-at-unit-tests-pytest-black/):
 >>
@@ -135,8 +134,7 @@ Let's assume in our scenario that we're not using the free and public `"https://
 
 So we should create a minimal dataset that just looks like the kind of data we expect (e.g. [mock_cereals.csv](./mock_cereals.csv)), and then inject it to the pipeline when testing. We can use the the handy [`monkeypatch`](https://docs.pytest.org/en/stable/how-to/monkeypatch.html) fixture to inject this mocked data into our pipeline.
 
-> <sup><sub>:information_source:</sub></sup> <sup><sub><b>Note</b></sub></sup>
->
+> <sup><sub>:information_source:</sub></sup> <sup><sub><b>Note</b></sub></sup><br/>
 > [Fixtures](https://docs.pytest.org/en/stable/fixture.html) in `pytest` can be passed as arguments to test functions to initialise some kind of base behaviour. In this case, the built-in `monkeypatch` fixture gives you tools to monkey-patch a code base before actually testing it.
 >
 > I regularly use the built-in fixtures but rarely write custom fixtures. I prefer to write normal functions when I need a utility for multiple tests, as `pytest`'s semantic model for fixtures—a magical argument that *might* have setup/teardown logic and *might* be an object with it's own methods and attributes—is confusing and not necessary for the majority of use cases.
@@ -252,14 +250,12 @@ def preprocess_cereals(df: pd.DataFrame) -> pd.DataFrame:
     return df
 ```
 
-> <sup><sub>:information_source:</sub></sup> <sup><sub><b>Note</b></sub></sup>
->
+> <sup><sub>:information_source:</sub></sup> <sup><sub><b>Note</b></sub></sup><br/>
 > Instead of assuming there is a "brand" column if there is no "name" column, I check for it first. This allows us to raise a custom error if it cannot be found, which might be handy if in the future neither a "name" or "brand" column is used for cereal names, as it explicitly tells us or another developer what exactly the problem is.
 
 As you can see, the tests so far all look similar to one another. We can utilise [`@pytest.mark.parametrize`](https://docs.pytest.org/en/stable/parametrize.html) to create a generalised test function which can be passed all the mocked datasets as parameters.
 
-> <sup><sub>:information_source:</sub></sup> <sup><sub><b>Note</b></sub></sup>
->
+> <sup><sub>:information_source:</sub></sup> <sup><sub><b>Note</b></sub></sup><br/>
 > [Marks](https://docs.pytest.org/en/stable/how-to/mark.html) in `pytest` sets metadata to test functions that can change how they behave when running the `pytest` application (i.e. on your terminal).
 
 ```python
@@ -407,8 +403,7 @@ def test_merge_ratings():
 
 How about having a go at writing a test and implementing this function? See the file [`exercise.ipynb`](./exercise.ipynb) for a template notebook to work on, which provides some example dataframes to use in `test_merge_ratings`.
 
-> <sup><sub>:information_source:</sub></sup> <sup><sub><b>Note</b></sub></sup>
->
+> <sup><sub>:information_source:</sub></sup> <sup><sub><b>Note</b></sub></sup><br/>
 > For unix-y terminals, including macOs and Windows Subsystem for Linux (WSL) terminals, a quickstart to get the notebook up and running could look like
 >
 > ```bash
