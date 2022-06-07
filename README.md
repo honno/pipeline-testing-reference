@@ -419,3 +419,50 @@ How about having a go at writing a test and implementing this function? See the 
 > ```
 >
 > A more comprehensive walk-through on running notebooks can be found [here](https://jupyter-notebook-beginner-guide.readthedocs.io/en/latest/).
+
+<details>
+<summary>If your interested to see how I'd approach this, click here to see my solution.</summary>
+
+```python
+# pipeline.py
+@op
+def merge_ratings(cereals_df: pd.DataFrame, reviews_df: pd.DataFrame) -> pd.DataFrame:
+    cereals_df = cereals_df.rename({"rating": "nutrition_rating"}, axis=1)
+    reviews_df = reviews_df.rename({"rating": "user_rating"}, axis=1)
+    merged_df = pd.merge(cereals_df, reviews_df, on="name")
+    return merged_df
+```
+
+
+```python
+# test_pipeline.py
+from pandas.testing import assert_frame_equal
+
+...
+
+def test_merge_ratings():
+    cereals_df = pd.DataFrame(
+        {
+            "name": ["Cheerios", "Apple Jacks", "Basic 4"],
+            "rating": [68.402, 33.983, 59.425],
+        }
+    )
+    reviews_df = pd.DataFrame(
+        {
+            "name": ["Cheerios", "Apple Jacks", "Basic 4"],
+            "rating": [58.645, 83.852, 42.421],
+        }
+    )
+
+    out = merge_ratings(cereals_df, reviews_df)
+
+    expected = pd.DataFrame(
+        {
+            "name": ["Cheerios", "Apple Jacks", "Basic 4"],
+            "nutrition_rating": [68.402, 33.983, 59.425],
+            "user_rating": [58.645, 83.852, 42.421],
+        }
+    )
+    assert_frame_equal(merge_ratings(cereals_df, reviews_df), expected)
+```
+</details>
